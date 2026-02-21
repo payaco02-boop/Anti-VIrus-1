@@ -29,25 +29,62 @@ function Toggle({ enabled, onChange, color = "#00d4ff" }: ToggleProps) {
   );
 }
 
-export default function Settings() {
-  const [settings, setSettings] = useState({
-    realTimeProtection: true,
-    aiHeuristics: true,
-    cloudAnalysis: true,
-    autoQuarantine: true,
-    deepScan: false,
-    networkMonitor: true,
-    emailProtection: false,
-    autoUpdate: true,
-    notifications: true,
-    darkMode: true,
-    scanOnBoot: false,
-    behaviorAnalysis: true,
-  });
+// Helper to load initial settings from localStorage
+function loadInitialSettings() {
+  if (typeof window === "undefined") {
+    return {
+      settings: {
+        realTimeProtection: true,
+        aiHeuristics: true,
+        cloudAnalysis: true,
+        autoQuarantine: true,
+        deepScan: false,
+        networkMonitor: true,
+        emailProtection: false,
+        autoUpdate: true,
+        notifications: true,
+        darkMode: true,
+        scanOnBoot: false,
+        behaviorAnalysis: true,
+      },
+      aiSensitivity: 75,
+      scanDepth: 2,
+    };
+  }
+  const stored = localStorage.getItem("shieldai_settings");
+  if (stored) {
+    try {
+      return JSON.parse(stored);
+    } catch (e) {
+      console.error("Failed to load settings:", e);
+    }
+  }
+  return {
+    settings: {
+      realTimeProtection: true,
+      aiHeuristics: true,
+      cloudAnalysis: true,
+      autoQuarantine: true,
+      deepScan: false,
+      networkMonitor: true,
+      emailProtection: false,
+      autoUpdate: true,
+      notifications: true,
+      darkMode: true,
+      scanOnBoot: false,
+      behaviorAnalysis: true,
+    },
+    aiSensitivity: 75,
+    scanDepth: 2,
+  };
+}
 
+export default function Settings() {
+  const initial = loadInitialSettings();
+  const [settings, setSettings] = useState(initial.settings);
   const [saved, setSaved] = useState(false);
-  const [aiSensitivity, setAiSensitivity] = useState(75);
-  const [scanDepth, setScanDepth] = useState(2);
+  const [aiSensitivity, setAiSensitivity] = useState(initial.aiSensitivity);
+  const [scanDepth, setScanDepth] = useState(initial.scanDepth);
 
   const saveSettings = () => {
     // Save to localStorage for persistence
@@ -57,7 +94,7 @@ export default function Settings() {
   };
 
   const toggle = (key: keyof typeof settings) => {
-    setSettings((prev) => ({ ...prev, [key]: !prev[key] }));
+    setSettings((prev: typeof settings) => ({ ...prev, [key]: !prev[key] }));
   };
 
   const sections = [

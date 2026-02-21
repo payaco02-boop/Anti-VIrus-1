@@ -108,8 +108,8 @@ export default function ThreatLog() {
           : t
       )
     );
-    const actionText = action === "delete" ? "eliminado" : action === "quarantine" ? "enviado a cuarentena" : "ignorado";
-    setActionMessage(`Amenaza ${actionText}`);
+    const actionText = action === "delete" ? "eliminado correctamente" : action === "quarantine" ? "puesto en cuarentena correctamente" : "ignorado correctamente";
+    setActionMessage(`✅ ${actionText}`);
     setTimeout(() => setActionMessage(null), 3000);
     setSelected(null);
   };
