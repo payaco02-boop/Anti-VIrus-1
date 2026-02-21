@@ -108,3 +108,4 @@ export async function GET() {
 | Initial | Template created with base setup |
 | 2026-02-21 | Added GitHub Actions workflow `.github/workflows/build-installer.yml` to auto-build Windows .exe installer on push to main/master |
 | 2026-02-21 | Fixed ffmpeg.dll error: switched from Next.js server mode to static export (`output: 'export'` in next.config.ts), updated electron/main.js to load `out/index.html` directly via `loadFile()`, removed API route (scan logic already client-side), simplified package.json build files config to only include `electron/**/*`, `out/**/*`, `package.json` |
+| 2026-02-21 | Built .exe locally: added `electron/assets/icon.ico`, fixed NSIS `installerLanguages` from `["Spanish","English"]` to `["en_US","es_ES"]` (locale codes required), installed wine32 for rcedit. Output: `dist/ShieldAI Antivirus Setup 1.0.0.exe` (165MB) and `dist/ShieldAI-Antivirus-Portable-1.0.0.exe` (165MB) |
