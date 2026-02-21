@@ -114,7 +114,7 @@ export default function ThreatLog() {
         )
       );
     }
-    const actionText = action === "delete" ? "se ha eliminado correctamente" : action === "quarantine" ? "se ha puesto en cuarentena correctamente" : "se ignoró correctamente";
+    const actionText = action === "delete" ? "se ha eliminado de la lista" : action === "quarantine" ? "se ha puesto en cuarentena correctamente" : "se ignoró correctamente";
     setActionMessage(`✅ ${actionText}`);
     setTimeout(() => setActionMessage(null), 3000);
     setSelected(null);
@@ -221,10 +221,10 @@ export default function ThreatLog() {
                     🦠
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p className="text-sm font-semibold text-white font-mono">{threat.name}</p>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="text-sm font-semibold text-white font-mono truncate">{threat.name}</p>
                       <span
-                        className="text-xs px-2 py-0.5 rounded-full font-bold"
+                        className="text-xs px-2 py-0.5 rounded-full font-bold flex-shrink-0"
                         style={{
                           background: `${levelColors[threat.level]}22`,
                           color: levelColors[threat.level],
@@ -237,9 +237,9 @@ export default function ThreatLog() {
                       {threat.path}
                     </p>
                   </div>
-                  <div className="text-right flex-shrink-0">
+                  <div className="text-right flex-shrink-0 ml-2">
                     <span
-                      className="text-xs px-2 py-1 rounded-lg"
+                      className="text-xs px-2 py-1 rounded-lg inline-block"
                       style={{
                         background: `${statusColors[threat.status]}22`,
                         color: statusColors[threat.status],
