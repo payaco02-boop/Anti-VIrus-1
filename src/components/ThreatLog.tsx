@@ -254,10 +254,10 @@ export default function ThreatLog() {
                 {/* Expanded details */}
                 {selected?.id === threat.id && (
                   <div
-                    className="mt-4 p-4 rounded-xl animate-fade-in"
+                    className="mt-4 p-4 rounded-xl animate-fade-in overflow-hidden"
                     style={{ background: "#0a0e1a", border: "1px solid #1e2d4a" }}
                   >
-                    <div className="grid grid-cols-2 gap-3 text-xs">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
                       {[
                         { label: "Tipo de Amenaza", value: threat.type },
                         { label: "Archivo", value: threat.file },
@@ -266,13 +266,13 @@ export default function ThreatLog() {
                         { label: "Detectado", value: threat.date },
                         { label: "Ruta Completa", value: threat.path },
                       ].map((item, i) => (
-                        <div key={i}>
+                        <div key={i} className="overflow-hidden">
                           <p style={{ color: "#475569" }}>{item.label}</p>
-                          <p className="font-medium text-white mt-0.5 font-mono">{item.value}</p>
+                          <p className="font-medium text-white mt-0.5 font-mono break-all text-xs">{item.value}</p>
                         </div>
                       ))}
                     </div>
-                    <div className="flex gap-2 mt-4">
+                    <div className="flex flex-wrap gap-2 mt-4">
                       <button
                         onClick={(e) => { e.stopPropagation(); handleAction(threat.id, "delete"); }}
                         className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all hover:scale-105"
