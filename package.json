@@ -86,8 +86,7 @@
       "deleteAppDataOnUninstall": false,
       "installerLanguages": ["Spanish", "English"],
       "language": "3082",
-      "multiLanguageInstaller": true,
-      "include": "installer/ShieldAI-Installer.nsi"
+      "multiLanguageInstaller": true
     },
     "portable": {
       "artifactName": "ShieldAI-Antivirus-Portable-${version}.exe"
