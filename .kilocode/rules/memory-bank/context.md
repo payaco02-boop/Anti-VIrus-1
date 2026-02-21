@@ -25,6 +25,11 @@ A complete AI-powered antivirus web application built with Next.js 16, featuring
 - [x] NSIS installer script (installer/ShieldAI-Installer.nsi)
 - [x] BUILD-INSTALLER.md guide for generating .exe
 - [x] Fixed ffmpeg.dll missing error: removed custom NSIS include from package.json so electron-builder handles file bundling natively
+- [x] Fixed UI not rendering in Electron: added `assetPrefix: "./"` to next.config.ts for relative paths
+- [x] Fixed Settings: "Guardar Configuración" button now saves to localStorage
+- [x] Fixed ThreatLog: Delete/Quarantine/Ignore buttons now work with state management
+- [x] Fixed Scanner: Removed false positive .exe detection, now only flags dangerous patterns (crypt, miner, inject, etc.)
+- [x] Added Full PC Scan feature with simulated scanning of Windows system locations
 
 ## Current Structure
 
