@@ -31,6 +31,7 @@ A complete AI-powered antivirus web application built with Next.js 16, featuring
 - [x] Fixed Scanner: Removed false positive .exe detection, now only flags dangerous patterns (crypt, miner, inject, etc.)
 - [x] Added Full PC Scan feature with simulated scanning of Windows system locations
 - [x] Fixed ThreatLog: Toast messages now appear when clicking Delete/Quarantine/Ignore buttons
+- [x] Fixed ThreatLog: Prevent text overflow in expanded details (added break-all, overflow-hidden, responsive grid)
 
 ## Current Structure
 
