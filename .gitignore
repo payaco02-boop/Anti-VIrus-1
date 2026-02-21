@@ -43,5 +43,9 @@ next-env.d.ts
 # build output
 /dist
 
+# installers and executables
+*.exe
+*.zip
+
 # old projects
 Anti-VIrus-1
