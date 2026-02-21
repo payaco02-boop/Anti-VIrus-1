@@ -221,7 +221,7 @@ export default function ThreatLog() {
                     🦠
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
+                    <div className="flex items-center gap-3 flex-wrap">
                       <p className="text-sm font-semibold text-white font-mono truncate">{threat.name}</p>
                       <span
                         className="text-xs px-2 py-0.5 rounded-full font-bold flex-shrink-0"
@@ -237,7 +237,7 @@ export default function ThreatLog() {
                       {threat.path}
                     </p>
                   </div>
-                  <div className="text-right flex-shrink-0 ml-2">
+                  <div className="text-right flex-shrink-0 ml-4">
                     <span
                       className="text-xs px-2 py-1 rounded-lg inline-block"
                       style={{
