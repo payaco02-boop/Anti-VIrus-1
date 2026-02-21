@@ -23,7 +23,6 @@ const THREAT_SIGNATURES = [
   { pattern: /malware/i, name: "Malware.Generic", level: "high" as const },
   { pattern: /ransomware/i, name: "Ransomware.WannaCry", level: "critical" as const },
   { pattern: /keylogger/i, name: "Spyware.Keylogger", level: "high" as const },
-  { pattern: /\.exe$/i, name: null, level: "low" as const },
   { pattern: /crack|keygen|patch/i, name: "PUA.Crack.Tool", level: "medium" as const },
   { pattern: /hack/i, name: "HackTool.Generic", level: "medium" as const },
 ];
@@ -59,8 +58,9 @@ function analyzeFileWithAI(file: File): Promise<ScanResult> {
           }
         }
 
-        // AI heuristic: random suspicious detection for demo (5% chance)
-        if (!threatFound && Math.random() < 0.05) {
+        // AI heuristic: Only flag suspicious for known dangerous patterns (not random)
+        const dangerousPatterns = [/crypt/i, /miner/i, /inject/i, /payload/i, /stealer/i, /botnet/i];
+        if (!threatFound && dangerousPatterns.some(p => p.test(fileName))) {
           threatFound = true;
           threatName = "Heuristic.Suspicious.Behavior";
           threatLevel = "medium";
@@ -115,6 +115,15 @@ const threatColors: Record<string, string> = {
   low: "#00cc66",
 };
 
+// PC scan locations (simulated)
+const pcLocations = [
+  { path: "C:\\Windows\\System32", name: "Sistema Windows", files: 2500 },
+  { path: "C:\\Program Files", name: "Programas", files: 1800 },
+  { path: "C:\\Users\\", name: "Perfil de Usuario", files: 3200 },
+  { path: "C:\\Downloads", name: "Descargas", files: 450 },
+  { path: "C:\\Documents", name: "Documentos", files: 890 },
+];
+
 export default function Scanner({ onScanComplete }: ScannerProps) {
   const [files, setFiles] = useState<File[]>([]);
   const [results, setResults] = useState<ScanResult[]>([]);
@@ -123,6 +132,7 @@ export default function Scanner({ onScanComplete }: ScannerProps) {
   const [currentFile, setCurrentFile] = useState("");
   const [dragOver, setDragOver] = useState(false);
   const [scanDone, setScanDone] = useState(false);
+  const [fullPcScan, setFullPcScan] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFiles = useCallback((newFiles: FileList | null) => {
@@ -145,6 +155,7 @@ export default function Scanner({ onScanComplete }: ScannerProps) {
   const startScan = useCallback(async () => {
     if (files.length === 0) return;
     setScanning(true);
+    setFullPcScan(false);
     setScanDone(false);
     setResults([]);
     setProgress(0);
@@ -182,11 +193,57 @@ export default function Scanner({ onScanComplete }: ScannerProps) {
     onScanComplete(threats);
   }, [files, onScanComplete]);
 
+  const startFullPcScan = useCallback(async () => {
+    setFullPcScan(true);
+    setScanning(true);
+    setScanDone(false);
+    setResults([]);
+    setProgress(0);
+
+    const scanResults: ScanResult[] = [];
+    const totalLocations = pcLocations.length;
+
+    for (let i = 0; i < pcLocations.length; i++) {
+      const loc = pcLocations[i];
+      setCurrentFile(`Escaneando: ${loc.name}`);
+      setProgress(Math.round((i / totalLocations) * 100));
+
+      // Simulate scanning each location (50 files per location for demo)
+      for (let j = 0; j < Math.min(loc.files, 50); j++) {
+        const simulatedFileName = `file_${j}.${["exe", "dll", "sys", "dat", "tmp"][Math.floor(Math.random() * 5)]}`;
+        
+        setResults((prev) => [
+          ...prev,
+          { fileName: simulatedFileName, fileSize: Math.floor(Math.random() * 1000000), status: "scanning" },
+        ]);
+
+        // Simulate AI analysis
+        const result = await analyzeFileWithAI(new File([], simulatedFileName));
+        scanResults.push(result);
+        
+        setResults((prev) => {
+          const updated = [...prev];
+          updated[prev.length - 1] = result;
+          return updated;
+        });
+      }
+    }
+
+    setProgress(100);
+    setCurrentFile("");
+    setScanning(false);
+    setScanDone(true);
+
+    const threats = scanResults.filter((r) => r.status === "threat" || r.status === "suspicious").length;
+    onScanComplete(threats);
+  }, [onScanComplete]);
+
   const clearAll = () => {
     setFiles([]);
     setResults([]);
     setScanDone(false);
     setProgress(0);
+    setFullPcScan(false);
   };
 
   const threats = results.filter((r) => r.status === "threat");
@@ -265,7 +322,7 @@ export default function Scanner({ onScanComplete }: ScannerProps) {
       <button
         onClick={startScan}
         disabled={files.length === 0 || scanning}
-        className="w-full py-4 rounded-xl font-bold text-lg transition-all duration-200 mb-6 animate-fade-in"
+        className="w-full py-4 rounded-xl font-bold text-lg transition-all duration-200 mb-4 animate-fade-in"
         style={{
           background: files.length === 0 || scanning
             ? "#1e2d4a"
@@ -284,6 +341,43 @@ export default function Scanner({ onScanComplete }: ScannerProps) {
           "🔍 Iniciar Análisis IA"
         )}
       </button>
+
+      {/* Full PC Scan button */}
+      {!scanning && files.length === 0 && (
+        <button
+          onClick={startFullPcScan}
+          className="w-full py-4 rounded-xl font-bold text-lg transition-all duration-200 mb-6 animate-fade-in"
+          style={{
+            background: "linear-gradient(135deg, #ff6600, #ff3300)",
+            color: "#fff",
+            boxShadow: "0 4px 20px #ff660044",
+          }}
+        >
+          💻 Escanear PC Completo
+        </button>
+      )}
+
+      {/* Show locations being scanned */}
+      {fullPcScan && scanning && (
+        <div
+          className="rounded-xl p-4 mb-6 animate-fade-in"
+          style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)" }}
+        >
+          <h4 className="font-semibold text-sm text-white mb-3">📍 Ubicaciones del sistema:</h4>
+          <div className="grid grid-cols-2 gap-2">
+            {pcLocations.map((loc, i) => (
+              <div
+                key={i}
+                className="flex items-center gap-2 text-xs p-2 rounded-lg"
+                style={{ background: "#0a0e1a" }}
+              >
+                <span>📁</span>
+                <span className="text-white truncate">{loc.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Progress */}
       {scanning && (

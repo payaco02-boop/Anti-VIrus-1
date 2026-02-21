@@ -45,8 +45,16 @@ export default function Settings() {
     behaviorAnalysis: true,
   });
 
+  const [saved, setSaved] = useState(false);
   const [aiSensitivity, setAiSensitivity] = useState(75);
   const [scanDepth, setScanDepth] = useState(2);
+
+  const saveSettings = () => {
+    // Save to localStorage for persistence
+    localStorage.setItem("shieldai_settings", JSON.stringify({ settings, aiSensitivity, scanDepth }));
+    setSaved(true);
+    setTimeout(() => setSaved(false), 3000);
+  };
 
   const toggle = (key: keyof typeof settings) => {
     setSettings((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -222,14 +230,15 @@ export default function Settings() {
 
       {/* Save button */}
       <button
+        onClick={saveSettings}
         className="w-full py-3 rounded-xl font-bold transition-all duration-200 hover:scale-105 animate-fade-in"
         style={{
-          background: "linear-gradient(135deg, #00d4ff, #0066ff)",
+          background: saved ? "#00cc66" : "linear-gradient(135deg, #00d4ff, #0066ff)",
           color: "#000",
-          boxShadow: "0 4px 20px #00d4ff44",
+          boxShadow: saved ? "0 4px 20px #00cc6644" : "0 4px 20px #00d4ff44",
         }}
       >
-        💾 Guardar Configuración
+        {saved ? "✅ Configuración Guardada" : "💾 Guardar Configuración"}
       </button>
     </div>
   );

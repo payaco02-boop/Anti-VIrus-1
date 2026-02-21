@@ -95,8 +95,24 @@ const statusLabels: Record<string, string> = {
 export default function ThreatLog() {
   const [filter, setFilter] = useState<"all" | "critical" | "high" | "medium" | "low">("all");
   const [selected, setSelected] = useState<Threat | null>(null);
+  const [threats, setThreats] = useState<Threat[]>(MOCK_THREATS);
+  const [actionMessage, setActionMessage] = useState<string | null>(null);
 
-  const filtered = MOCK_THREATS.filter((t) => filter === "all" || t.level === filter);
+  const filtered = threats.filter((t) => filter === "all" || t.level === filter);
+
+  const handleAction = (threatId: number, action: "delete" | "quarantine" | "ignore") => {
+    setThreats((prev) =>
+      prev.map((t) =>
+        t.id === threatId
+          ? { ...t, status: action === "delete" ? "deleted" : action === "quarantine" ? "quarantined" : "ignored" }
+          : t
+      )
+    );
+    const actionText = action === "delete" ? "eliminado" : action === "quarantine" ? "enviado a cuarentena" : "ignorado";
+    setActionMessage(`Amenaza ${actionText}`);
+    setTimeout(() => setActionMessage(null), 3000);
+    setSelected(null);
+  };
 
   return (
     <div className="p-8 max-w-5xl mx-auto">
@@ -110,10 +126,10 @@ export default function ThreatLog() {
       {/* Summary cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 animate-fade-in">
         {[
-          { level: "critical", count: MOCK_THREATS.filter((t) => t.level === "critical").length, icon: "🔴" },
-          { level: "high", count: MOCK_THREATS.filter((t) => t.level === "high").length, icon: "🟠" },
-          { level: "medium", count: MOCK_THREATS.filter((t) => t.level === "medium").length, icon: "🟡" },
-          { level: "low", count: MOCK_THREATS.filter((t) => t.level === "low").length, icon: "🟢" },
+          { level: "critical", count: threats.filter((t) => t.level === "critical").length, icon: "🔴" },
+          { level: "high", count: threats.filter((t) => t.level === "high").length, icon: "🟠" },
+          { level: "medium", count: threats.filter((t) => t.level === "medium").length, icon: "🟡" },
+          { level: "low", count: threats.filter((t) => t.level === "low").length, icon: "🟢" },
         ].map((s) => (
           <button
             key={s.level}
@@ -242,19 +258,22 @@ export default function ThreatLog() {
                     </div>
                     <div className="flex gap-2 mt-4">
                       <button
-                        className="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
+                        onClick={(e) => { e.stopPropagation(); handleAction(threat.id, "delete"); }}
+                        className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all hover:scale-105"
                         style={{ background: "#ff444422", color: "#ff4444", border: "1px solid #ff444444" }}
                       >
                         🗑️ Eliminar
                       </button>
                       <button
-                        className="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
+                        onClick={(e) => { e.stopPropagation(); handleAction(threat.id, "quarantine"); }}
+                        className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all hover:scale-105"
                         style={{ background: "#ffaa0022", color: "#ffaa00", border: "1px solid #ffaa0044" }}
                       >
                         📦 Cuarentena
                       </button>
                       <button
-                        className="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
+                        onClick={(e) => { e.stopPropagation(); handleAction(threat.id, "ignore"); }}
+                        className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all hover:scale-105"
                         style={{ background: "#1e2d4a", color: "#64748b" }}
                       >
                         ✓ Ignorar
