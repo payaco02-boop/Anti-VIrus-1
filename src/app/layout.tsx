@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Next.js Template",
-  description: "A minimal Next.js starter template",
+  title: "ShieldAI Antivirus",
+  description: "AI-powered antivirus protection for your system",
 };
 
 export default function RootLayout({

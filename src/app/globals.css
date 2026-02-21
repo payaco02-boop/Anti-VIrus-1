@@ -1,1 +1,121 @@
 @import "tailwindcss";
+
+:root {
+  --background: #0a0e1a;
+  --foreground: #e2e8f0;
+  --primary: #00d4ff;
+  --primary-dark: #0099cc;
+  --danger: #ff4444;
+  --warning: #ffaa00;
+  --success: #00cc66;
+  --card-bg: #0f1629;
+  --card-border: #1e2d4a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0e1a;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e2d4a;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00d4ff44;
+}
+
+/* Animations */
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+@keyframes scan-line {
+  0% { top: 0%; }
+  100% { top: 100%; }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 10px #00d4ff44; }
+  50% { box-shadow: 0 0 30px #00d4ff88, 0 0 60px #00d4ff22; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes threat-flash {
+  0%, 100% { background-color: transparent; }
+  50% { background-color: #ff444422; }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 1.5s ease-out infinite;
+}
+
+.animate-scan-line {
+  animation: scan-line 2s linear infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 3s linear infinite;
+}
+
+.animate-threat-flash {
+  animation: threat-flash 1s ease-in-out infinite;
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #00d4ff, #0099ff, #6600ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Shield glow */
+.shield-glow {
+  filter: drop-shadow(0 0 20px #00d4ff88);
+}
+
+/* Progress bar */
+.progress-bar {
+  background: linear-gradient(90deg, #00d4ff, #0066ff);
+  transition: width 0.3s ease;
+}
+
+/* Threat level colors */
+.threat-critical { color: #ff2222; }
+.threat-high { color: #ff6600; }
+.threat-medium { color: #ffaa00; }
+.threat-low { color: #00cc66; }
+.threat-clean { color: #00d4ff; }
