@@ -105,3 +105,4 @@ export async function GET() {
 | Date | Changes |
 |------|---------|
 | Initial | Template created with base setup |
+| 2026-02-21 | Added GitHub Actions workflow `.github/workflows/build-installer.yml` to auto-build Windows .exe installer on push to main/master |
