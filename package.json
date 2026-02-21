@@ -75,7 +75,7 @@
       "runAfterFinish": true,
       "perMachine": true,
       "deleteAppDataOnUninstall": false,
-      "installerLanguages": ["Spanish", "English"],
+      "installerLanguages": ["en_US", "es_ES"],
       "language": "3082",
       "multiLanguageInstaller": true
     },
