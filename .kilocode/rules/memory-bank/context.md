@@ -107,3 +107,4 @@ export async function GET() {
 |------|---------|
 | Initial | Template created with base setup |
 | 2026-02-21 | Added GitHub Actions workflow `.github/workflows/build-installer.yml` to auto-build Windows .exe installer on push to main/master |
+| 2026-02-21 | Fixed ffmpeg.dll error: switched from Next.js server mode to static export (`output: 'export'` in next.config.ts), updated electron/main.js to load `out/index.html` directly via `loadFile()`, removed API route (scan logic already client-side), simplified package.json build files config to only include `electron/**/*`, `out/**/*`, `package.json` |

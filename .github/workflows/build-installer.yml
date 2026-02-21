@@ -27,11 +27,7 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      # 4. Build Next.js app
-      - name: Build Next.js app
-        run: bun run build
-
-      # 5. Build Electron + NSIS installer
+      # 4. Build Next.js static export + Electron NSIS installer
       - name: Build Electron installer (.exe)
         run: bun run electron:build
         env:

@@ -1,31 +1,8 @@
 const { app, BrowserWindow, Menu, Tray, nativeImage, ipcMain, dialog, shell } = require("electron");
 const path = require("path");
-const { spawn } = require("child_process");
-const http = require("http");
 
 let mainWindow = null;
 let tray = null;
-let nextProcess = null;
-const PORT = 3000;
-
-// Wait for Next.js server to be ready
-function waitForServer(url, retries = 30) {
-  return new Promise((resolve, reject) => {
-    const check = (remaining) => {
-      if (remaining <= 0) {
-        reject(new Error("Server did not start in time"));
-        return;
-      }
-      http.get(url, (res) => {
-        if (res.statusCode === 200) resolve();
-        else setTimeout(() => check(remaining - 1), 1000);
-      }).on("error", () => {
-        setTimeout(() => check(remaining - 1), 1000);
-      });
-    };
-    check(retries);
-  });
-}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -64,7 +41,9 @@ function createWindow() {
     }
   });
 
-  mainWindow.loadURL(`http://localhost:${PORT}`);
+  // Load static Next.js export
+  const indexPath = path.join(__dirname, "..", "out", "index.html");
+  mainWindow.loadFile(indexPath);
 }
 
 function createTray() {
@@ -130,39 +109,7 @@ function createTray() {
   });
 }
 
-async function startNextServer() {
-  return new Promise((resolve) => {
-    const nextBin = path.join(__dirname, "..", "node_modules", ".bin", "next");
-    const appDir = path.join(__dirname, "..");
-
-    nextProcess = spawn(
-      process.platform === "win32" ? nextBin + ".cmd" : nextBin,
-      ["start", "--port", PORT.toString()],
-      {
-        cwd: appDir,
-        stdio: "pipe",
-        shell: process.platform === "win32",
-      }
-    );
-
-    nextProcess.stdout.on("data", (data) => {
-      const output = data.toString();
-      console.log("[Next.js]", output);
-      if (output.includes("Ready") || output.includes("started")) {
-        resolve();
-      }
-    });
-
-    nextProcess.stderr.on("data", (data) => {
-      console.error("[Next.js Error]", data.toString());
-    });
-
-    // Fallback: wait 5 seconds
-    setTimeout(resolve, 5000);
-  });
-}
-
-app.whenReady().then(async () => {
+app.whenReady().then(() => {
   // Show loading splash
   const splash = new BrowserWindow({
     width: 400,
@@ -191,16 +138,12 @@ app.whenReady().then(async () => {
     </html>
   `);
 
-  try {
-    await startNextServer();
-    await waitForServer(`http://localhost:${PORT}`);
-  } catch (err) {
-    console.error("Failed to start server:", err);
-  }
-
-  splash.close();
-  createTray();
-  createWindow();
+  // Brief splash delay then load app
+  setTimeout(() => {
+    splash.close();
+    createTray();
+    createWindow();
+  }, 2000);
 });
 
 app.on("window-all-closed", () => {
@@ -220,9 +163,6 @@ app.on("activate", () => {
 
 app.on("before-quit", () => {
   app.isQuitting = true;
-  if (nextProcess) {
-    nextProcess.kill();
-  }
 });
 
 // IPC handlers
