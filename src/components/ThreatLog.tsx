@@ -101,14 +101,20 @@ export default function ThreatLog() {
   const filtered = threats.filter((t) => filter === "all" || t.level === filter);
 
   const handleAction = (threatId: number, action: "delete" | "quarantine" | "ignore") => {
-    setThreats((prev) =>
-      prev.map((t) =>
-        t.id === threatId
-          ? { ...t, status: action === "delete" ? "deleted" : action === "quarantine" ? "quarantined" : "ignored" }
-          : t
-      )
-    );
-    const actionText = action === "delete" ? "eliminado correctamente" : action === "quarantine" ? "puesto en cuarentena correctamente" : "ignorado correctamente";
+    if (action === "delete") {
+      // Remove threat from the list completely
+      setThreats((prev) => prev.filter((t) => t.id !== threatId));
+    } else {
+      // Update status for quarantine or ignore
+      setThreats((prev) =>
+        prev.map((t) =>
+          t.id === threatId
+            ? { ...t, status: action === "quarantine" ? "quarantined" : "ignored" }
+            : t
+        )
+      );
+    }
+    const actionText = action === "delete" ? "se ha eliminado correctamente" : action === "quarantine" ? "se ha puesto en cuarentena correctamente" : "se ignoró correctamente";
     setActionMessage(`✅ ${actionText}`);
     setTimeout(() => setActionMessage(null), 3000);
     setSelected(null);
@@ -122,6 +128,16 @@ export default function ThreatLog() {
           Historial completo de amenazas detectadas por la IA
         </p>
       </div>
+
+      {/* Action message toast */}
+      {actionMessage && (
+        <div
+          className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-lg animate-fade-in"
+          style={{ background: "#0f172a", border: "1px solid #00d4ff44", color: "#00d4ff" }}
+        >
+          {actionMessage}
+        </div>
+      )}
 
       {/* Summary cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 animate-fade-in">
